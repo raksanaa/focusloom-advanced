@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 350px;
+      min-height: 400px;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .session-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      backdrop-filter: blur(10px);
+    }
+
+    .session-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .status-active { background: #4ade80; }
+    .status-inactive { background: #6b7280; }
+
+    .focus-score {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin: 15px 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    .button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 8px;
+    }
+
+    .button-primary {
+      background: #4ade80;
+      color: white;
+    }
+
+    .button-primary:hover {
+      background: #22c55e;
+    }
+
+    .button-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .button-secondary:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .button-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .button-danger:hover {
+      background: #dc2626;
+    }
+
+    .activity-breakdown {
+      margin-top: 15px;
+    }
+
+    .activity-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      font-size: 12px;
+    }
+
+    .activity-bar {
+      height: 4px;
+      border-radius: 2px;
+      margin-top: 5px;
+    }
+
+    .productive { background: #4ade80; }
+    .neutral { background: #fbbf24; }
+    .distracting { background: #ef4444; }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🎯 FOCUSLOOM</div>
+      <div class="subtitle">Browser Focus Tracker</div>
+    </div>
+
+    <!-- Session Status -->
+    <div class="session-card">
+      <div class="session-status">
+        <div style="display: flex; align-items: center;">
+          <div id="statusIndicator" class="status-indicator status-inactive"></div>
+          <span id="statusText">No Active Session</span>
+        </div>
+        <div id="sessionTime">00:00</div>
+      </div>
+
+      <div id="focusScore" class="focus-score">--</div>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div id="distractionCount" class="stat-value">0</div>
+          <div class="stat-label">Distractions</div>
+        </div>
+        <div class="stat-item">
+          <div id="productiveTime" class="stat-value">0m</div>
+          <div class="stat-label">Productive</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div id="startControls">
+      <button id="startSession" class="button button-primary">
+        🚀 Start Focus Session
+      </button>
+      <button id="openApp" class="button button-secondary">
+        📱 Open FOCUSLOOM App
+      </button>
+    </div>
+
+    <div id="activeControls" class="hidden">
+      <button id="endSession" class="button button-danger">
+        ⏹️ End Session
+      </button>
+      <button id="logDistraction" class="button button-secondary">
+        ⚠️ Log Distraction
+      </button>
+    </div>
+
+    <!-- Activity Breakdown -->
+    <div id="activityBreakdown" class="activity-breakdown hidden">
+      <h4 style="margin: 0 0 10px 0; font-size: 14px;">Time Breakdown</h4>
+      
+      <div class="activity-item">
+        <span>📚 Productive</span>
+        <span id="productivePercent">0%</span>
+      </div>
+      <div class="activity-bar productive" id="productiveBar" style="width: 0%"></div>
+
+      <div class="activity-item">
+        <span>⚪ Neutral</span>
+        <span id="neutralPercent">0%</span>
+      </div>
+      <div class="activity-bar neutral" id="neutralBar" style="width: 0%"></div>
+
+      <div class="activity-item">
+        <span>🔴 Distracting</span>
+        <span id="distractingPercent">0%</span>
+      </div>
+      <div class="activity-bar distracting" id="distractingBar" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
