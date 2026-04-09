@@ -27,6 +27,8 @@ const connectDB = async () => {
       socketTimeoutMS: 45000,
     });
     console.log('MongoDB connected');
+    console.log('URI exists:', !!process.env.MONGODB_URI);
+
   } catch (err) {
     console.error('MongoDB connection error:', err.message);
     console.log('Retrying connection in 5 seconds...');
